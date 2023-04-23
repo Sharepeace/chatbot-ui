@@ -28,7 +28,9 @@ async function scrapeGithubRepo(repoUrl: string, token?: string): Promise<Map<st
     const contents = (await response.json()) as GitHubContentItem[];
     for (const item of contents) {
         if (item.type === "file") {
-            files.push(item.name);
+            if (item.name !== "package-lock.json") { // Add this condition
+                files.push(item.name);
+            }
         } else if (item.type === "dir") {
             folders.push(item.path);
         }

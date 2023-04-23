@@ -219,11 +219,6 @@ export const Chatbar = () => {
   const [files, setFiles] = useState<FileLite[]>([]);
 
   const handleGitRepoLoad = (files: FileLite[]) => {
-    if (typeof files[Symbol.iterator] !== 'function') {
-      console.error('files is not iterable');
-      return;
-    }
-    console.log("chatbar has git embedding files");
     setFiles((prevFiles) => [...prevFiles, ...files]);
   };
   

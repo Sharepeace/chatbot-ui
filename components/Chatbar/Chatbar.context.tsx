@@ -20,7 +20,7 @@ export interface ChatbarContextProps {
   handleClearPluginKey: (pluginKey: PluginKey) => void;
   handleApiKeyChange: (apiKey: string) => void;
   handleGithubRepoChange: (repoUrl: string) => void;
-  handleGitRepoLoad: Dispatch<SetStateAction<FileLite[]>>;
+  handleGitRepoLoad: (files: FileLite[]) => void;
 }
 
 const ChatbarContext = createContext<ChatbarContextProps>(undefined!);

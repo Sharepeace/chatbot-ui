@@ -27,7 +27,7 @@ import axios from "axios";
 interface Props {
     repoUrl: string;
     onRepoUrlChange: (repoUrl: string) => void;
-    handleSetGitFiles: Dispatch<SetStateAction<FileLite[]>>;
+    handleSetGitFiles: (files: FileLite[]) => void;
 }
 
 export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFiles }) => {
@@ -98,8 +98,8 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
                 const data = await response.json();
                 console.log("git repo scraped: ", data);
                 if (Array.isArray(data.files)) {
-                    console.log("Received files from API:", data);
-                    handleSetGitFiles((prevFiles) => [...prevFiles, ...data.files]);
+                    console.log("Received files from API:", data.files);
+                    handleSetGitFiles(data.files);
                     console.log("git repo files processed: ", data);
                     setProgress({ percentage: 100, message: "Complete!" });
                 } else {
@@ -172,7 +172,7 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
 
         // Set the files state with the valid files and the existing files
         setFiles((prevFiles) => [...prevFiles, ...validFiles]);
-        handleSetGitFiles((prevFiles) => [...prevFiles, ...validFiles]);
+        handleSetGitFiles(validFiles);
 
         setLoading(false);
     };
