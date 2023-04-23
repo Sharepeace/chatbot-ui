@@ -9,6 +9,7 @@ import { SettingDialog } from '@/components/Settings/SettingDialog';
 
 import { Import } from '../../Settings/Import';
 import { Key } from '../../Settings/Key';
+import { GithubRepo } from '../../Settings/GithubRepo';
 import { SidebarButton } from '../../Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
 import { ClearConversations } from './ClearConversations';
@@ -17,6 +18,11 @@ import { PluginKeys } from './PluginKeys';
 export const ChatbarSettings = () => {
   const { t } = useTranslation('sidebar');
   const [isSettingDialogOpen, setIsSettingDialog] = useState<boolean>(false);
+  const [repoUrl, setRepoUrl] = useState<string>('');
+
+  const handleRepoUrlChange = (newRepoUrl: string) => {
+    setRepoUrl(newRepoUrl);
+  };
 
   const {
     state: {
@@ -55,6 +61,8 @@ export const ChatbarSettings = () => {
         icon={<IconSettings size={18} />}
         onClick={() => setIsSettingDialog(true)}
       />
+
+      <GithubRepo repoUrl={repoUrl} onRepoUrlChange={handleRepoUrlChange} />
 
       {!serverSideApiKeyIsSet ? (
         <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
