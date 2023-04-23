@@ -61,7 +61,7 @@ async function scrapeGithubRepo(repoUrl: string, token?: string): Promise<Map<st
         } else {
             const subfolderContents = (await folderResponse.json()) as GitHubContentItem[];
             for (const item of subfolderContents) {
-                if (item.type === "file") {
+                if (item.type === "file" && !shouldIgnore(item.path)) {
                     const fileUrl = `https://raw.githubusercontent.com/${owner}/${repo}/master/${item.path}`;
                     const fileResponse = await fetch(fileUrl, { headers });
                     if (!fileResponse.ok) {
@@ -80,5 +80,36 @@ async function scrapeGithubRepo(repoUrl: string, token?: string): Promise<Map<st
 
     return scrapedText;
 }
+
+function shouldIgnore(filePath: string) {
+    const ignorePatterns = [
+      /\/node_modules\//,
+      /\/\.pnp\//,
+      /\.pnp\.js$/,
+      /\/coverage\//,
+      /\/test-results\//,
+      /\/\.next\//,
+      /\/out\//,
+      /\/dist\//,
+      /\/build\//,
+      /\.DS_Store$/,
+      /\.pem$/,
+      /npm-debug\.log.*$/,
+      /yarn-debug\.log.*$/,
+      /yarn-error\.log.*$/,
+      /\.pnpm-debug\.log.*$/,
+      /\.env.*\.local$/,
+      /\.vercel$/,
+      /\.tsbuildinfo$/,
+      /next-env\.d\.ts$/,
+      /\.idea$/,
+      /pnpm-lock\.yaml$/,
+      /\.(jpg|jpeg|png|gif|bmp|tiff|webp|ico|svg)$/i, // Image file extensions
+      /\.(pdf|docx?|xlsx?|pptx?|exe|dll|bin|so|zip|tar|gz|bz2)$/i, // Binary file extensions
+    ];
+  
+    return ignorePatterns.some((pattern) => pattern.test(filePath));
+  }
+  
 
 export default scrapeGithubRepo;

@@ -1,4 +1,5 @@
-import { Dispatch, createContext } from 'react';
+import { Dispatch, createContext, SetStateAction } from 'react';
+import { FileLite } from '@/types/file';
 
 import { ActionType } from '@/hooks/useCreateReducer';
 
@@ -19,6 +20,7 @@ export interface ChatbarContextProps {
   handleClearPluginKey: (pluginKey: PluginKey) => void;
   handleApiKeyChange: (apiKey: string) => void;
   handleGithubRepoChange: (repoUrl: string) => void;
+  handleGitRepoLoad: Dispatch<SetStateAction<FileLite[]>>;
 }
 
 const ChatbarContext = createContext<ChatbarContextProps>(undefined!);

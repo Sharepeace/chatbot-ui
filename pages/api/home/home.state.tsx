@@ -4,6 +4,7 @@ import { FolderInterface } from '@/types/folder';
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { PluginKey } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
+import { FileLite } from '@/types/file'
 
 export interface HomeInitialState {
   apiKey: string;
@@ -27,6 +28,8 @@ export interface HomeInitialState {
   defaultModelId: OpenAIModelID | undefined;
   serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
+  repoUrl: string;
+  repoFile: FileLite[];
 }
 
 export const initialState: HomeInitialState = {
@@ -51,4 +54,6 @@ export const initialState: HomeInitialState = {
   defaultModelId: undefined,
   serverSideApiKeyIsSet: false,
   serverSidePluginKeysSet: false,
+  repoUrl: '',
+  repoFile: []
 };

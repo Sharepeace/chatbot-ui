@@ -1,5 +1,12 @@
 import { IconCheck, IconX, IconGitBranch } from '@tabler/icons-react';
-import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import {
+    FC, KeyboardEvent,
+    useEffect,
+    useRef,
+    useState,
+    Dispatch,
+    SetStateAction,
+} from 'react';
 
 import { useTranslation } from 'next-i18next';
 
@@ -13,14 +20,17 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import LinearProgress from '@mui/material/LinearProgress';
-
+import { FileLite } from '@/types/file';
+import { compact } from "lodash";
+import axios from "axios";
 
 interface Props {
     repoUrl: string;
     onRepoUrlChange: (repoUrl: string) => void;
+    handleSetGitFiles: Dispatch<SetStateAction<FileLite[]>>;
 }
 
-export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange }) => {
+export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFiles }) => {
     const { t } = useTranslation('sidebar');
     const [isChanging, setIsChanging] = useState(false);
     const [newRepoUrl, setNewRepoUrl] = useState(repoUrl);
@@ -49,42 +59,123 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange }) => {
         setIsDialogOpen(true);
     };
 
+
+    // const handleSetFiles = props.handleSetFiles;
+
+    const [files, setFiles] = useState<FileLite[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
     const [progress, setProgress] = useState({ percentage: 0, message: '' });
     const fetchGitHubRepo = async (repoUrl: string) => {
         try {
-            // Simulate API progress
-            setProgress({ percentage: 0, message: 'Fetching...' });
+            // Set initial progress to 0%
+            let percentage = 0;
+            setProgress({ percentage, message: 'Fetching...' });
 
-            // Replace the following code block with your actual API call and progress handling
-            setTimeout(() => setProgress({ percentage: 25, message: 'Fetching...' }), 1000);
-            setTimeout(() => setProgress({ percentage: 50, message: 'Fetching...' }), 2000);
-            setTimeout(() => setProgress({ percentage: 75, message: 'Fetching...' }), 3000);
-            setTimeout(() => setProgress({ percentage: 100, message: 'Complete!' }), 4000);
+            // Start interval to increment progress by 1% every 500ms
+            const intervalId = setInterval(() => {
+                if (percentage < 100) {
+                    percentage++;
+                    setProgress({ percentage, message: `Fetching...${percentage}%` });
+                }
+            }, 500);
 
             // Example API call
-            const response = await fetch(`/api/githubScrape?repoUrl=${encodeURIComponent(repoUrl)}`, {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              });
-          
+            const response = await fetch(
+                `/api/process-github-repo?repoUrl=${encodeURIComponent(repoUrl)}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            // Stop the progress interval when response is received
+            clearInterval(intervalId);
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
-                setProgress({ percentage: 100, message: 'Complete!' });
+                console.log("git repo scraped: ", data);
+                if (Array.isArray(data.files)) {
+                    console.log("Received files from API:", data);
+                    handleSetGitFiles((prevFiles) => [...prevFiles, ...data.files]);
+                    console.log("git repo files processed: ", data);
+                    setProgress({ percentage: 100, message: "Complete!" });
+                } else {
+                    console.error("Error processing files: 'files' property is not an array");
+                    setProgress({ percentage: 0, message: "Errored" });
+                }
             } else {
                 console.error('Error fetching GitHub repo:', response.status);
-                setProgress({ percentage: 0, message: '' });
+                setProgress({ percentage: 0, message: 'Errored' });
             }
+
         } catch (error) {
             console.error('Error fetching GitHub repo:', error);
-            setProgress({ percentage: 0, message: '' });
+            setProgress({ percentage: 0, message: 'Errored' });
         }
+
     };
 
+    const processScrapedData = async (scrapedData: Array<[string, string]>) => {
+        setError("");
 
+        // if (files.length + scrapedData.length > props.maxNumFiles) {
+        //   setError(`You can only upload up to ${props.maxNumFiles} files.`);
+        //   return;
+        // }
+
+        setLoading(true);
+
+        const processedFiles = await Promise.all(
+            scrapedData.map(async ([fileName, fileText]) => {
+                // Check if the file name already exists in the files state
+                if (files.find((f) => f.name === fileName)) {
+                    return null; // Skip this file
+                }
+
+                try {
+                    const processFileResponse = await axios.post("/api/process-text", {
+                        text: fileText,
+                    });
+
+                    if (processFileResponse.status === 200) {
+                        const meanEmbedding = processFileResponse.data.meanEmbedding;
+                        const chunks = processFileResponse.data.chunks;
+
+                        const fileObject: FileLite = {
+                            name: fileName,
+                            url: "",
+                            type: "text/plain",
+                            size: fileText.length,
+                            expanded: false,
+                            embedding: meanEmbedding,
+                            chunks,
+                            extractedText: fileText,
+                        };
+
+                        return fileObject;
+                    } else {
+                        console.log("Error creating file embedding");
+                        return null;
+                    }
+                } catch (err: any) {
+                    console.log(`Error creating file embedding: ${err}`);
+                    return null;
+                }
+            })
+        );
+
+        // Filter out any null values from the processedFiles array
+        const validFiles = compact(processedFiles);
+
+        // Set the files state with the valid files and the existing files
+        setFiles((prevFiles) => [...prevFiles, ...validFiles]);
+        handleSetGitFiles((prevFiles) => [...prevFiles, ...validFiles]);
+
+        setLoading(false);
+    };
 
     return (
         <>

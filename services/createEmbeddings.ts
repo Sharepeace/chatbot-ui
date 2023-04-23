@@ -7,14 +7,18 @@ export type Embeddings = {
 };
 
 export async function createEmbeddings({
+  fileName,
   text,
   maxCharLength,
 }: {
+  fileName: string;
   text: string;
   maxCharLength?: number;
 }): Promise<Embeddings> {
   try {
+    console.log("createEmbeddings getEmbeddingsForText: ");
     const textEmbeddings = await getEmbeddingsForText({
+      fileName,
       text,
       maxCharLength,
     });

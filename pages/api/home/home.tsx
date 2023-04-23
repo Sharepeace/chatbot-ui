@@ -284,7 +284,7 @@ const Home = ({
 
     const repoUrl = localStorage.getItem('repoUrl');
     if (repoUrl) {
-      console.log("should dispatch repoUrl here")
+      console.log("should dispatch repoUrl here ",repoUrl)
     }
 
     const showChatbar = localStorage.getItem('showChatbar');

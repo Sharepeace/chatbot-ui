@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
@@ -23,6 +23,7 @@ import { Conversations } from './components/Conversations';
 import Sidebar from '../Sidebar';
 import ChatbarContext from './Chatbar.context';
 import { ChatbarInitialState, initialState } from './Chatbar.state';
+import { FileLite } from '@/types/file'
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -215,6 +216,18 @@ export const Chatbar = () => {
     }
   }, [searchTerm, conversations]);
 
+  const [files, setFiles] = useState<FileLite[]>([]);
+
+  const handleGitRepoLoad = (files: FileLite[]) => {
+    if (typeof files[Symbol.iterator] !== 'function') {
+      console.error('files is not iterable');
+      return;
+    }
+    console.log("chatbar has git embedding files");
+    setFiles((prevFiles) => [...prevFiles, ...files]);
+  };
+  
+
   return (
     <ChatbarContext.Provider
       value={{
@@ -226,7 +239,8 @@ export const Chatbar = () => {
         handlePluginKeyChange,
         handleClearPluginKey,
         handleApiKeyChange,
-        handleGithubRepoChange
+        handleGithubRepoChange,
+        handleGitRepoLoad,
       }}
     >
       <Sidebar<Conversation>

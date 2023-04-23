@@ -42,6 +42,7 @@ export const ChatbarSettings = () => {
     handleExportData,
     handleApiKeyChange,
     handleGithubRepoChange,
+    handleGitRepoLoad
   } = useContext(ChatbarContext);
 
   return (
@@ -64,7 +65,7 @@ export const ChatbarSettings = () => {
         onClick={() => setIsSettingDialog(true)}
       />
 
-      <GithubRepo repoUrl={repoUrl} onRepoUrlChange={handleGithubRepoChange} />
+      <GithubRepo repoUrl={repoUrl} onRepoUrlChange={handleGithubRepoChange} handleSetGitFiles={handleGitRepoLoad} />
 
       {!serverSideApiKeyIsSet ? (
         <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />

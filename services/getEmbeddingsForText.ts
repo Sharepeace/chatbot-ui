@@ -9,10 +9,12 @@ const MAX_CHAR_LENGTH = 250 * 4;
 // The text is split into chunks of a given maximum charcter length
 // The embeddings are computed in batches of a given size
 export async function getEmbeddingsForText({
+  fileName,
   text,
   maxCharLength = MAX_CHAR_LENGTH,
   batchSize = 20,
 }: {
+  fileName: string;
   text: string;
   maxCharLength?: number;
   batchSize?: number;
@@ -25,7 +27,8 @@ export async function getEmbeddingsForText({
   }
 
   try {
-    const batchPromises = batches.map((batch) => embedding({ input: batch }));
+    console.log("Entering getEmbeddingsForText: ",fileName);
+    const batchPromises = batches.map((batch) => embedding({ fileName, input: batch }));
 
     const embeddings = (await Promise.all(batchPromises)).flat();
 
