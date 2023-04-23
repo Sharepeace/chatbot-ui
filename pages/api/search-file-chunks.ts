@@ -8,12 +8,16 @@ type Data = {
   error?: string;
 };
 
+// export const config = {
+//   api: {
+//     bodyParser: {
+//       sizeLimit: "30mb",
+//     },
+//   },
+// };
+
 export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "30mb",
-    },
-  },
+  runtime: 'edge',
 };
 
 export default async function handler(

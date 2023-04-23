@@ -118,65 +118,6 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
 
     };
 
-    const processScrapedData = async (scrapedData: Array<[string, string]>) => {
-        setError("");
-
-        // if (files.length + scrapedData.length > props.maxNumFiles) {
-        //   setError(`You can only upload up to ${props.maxNumFiles} files.`);
-        //   return;
-        // }
-
-        setLoading(true);
-
-        const processedFiles = await Promise.all(
-            scrapedData.map(async ([fileName, fileText]) => {
-                // Check if the file name already exists in the files state
-                if (files.find((f) => f.name === fileName)) {
-                    return null; // Skip this file
-                }
-
-                try {
-                    const processFileResponse = await axios.post("/api/process-text", {
-                        text: fileText,
-                    });
-
-                    if (processFileResponse.status === 200) {
-                        const meanEmbedding = processFileResponse.data.meanEmbedding;
-                        const chunks = processFileResponse.data.chunks;
-
-                        const fileObject: FileLite = {
-                            name: fileName,
-                            url: "",
-                            type: "text/plain",
-                            size: fileText.length,
-                            expanded: false,
-                            embedding: meanEmbedding,
-                            chunks,
-                            extractedText: fileText,
-                        };
-
-                        return fileObject;
-                    } else {
-                        console.log("Error creating file embedding");
-                        return null;
-                    }
-                } catch (err: any) {
-                    console.log(`Error creating file embedding: ${err}`);
-                    return null;
-                }
-            })
-        );
-
-        // Filter out any null values from the processedFiles array
-        const validFiles = compact(processedFiles);
-
-        // Set the files state with the valid files and the existing files
-        setFiles((prevFiles) => [...prevFiles, ...validFiles]);
-        handleSetGitFiles(validFiles);
-
-        setLoading(false);
-    };
-
     return (
         <>
             {isChanging ? (

@@ -1,4 +1,5 @@
 import { OpenAIModel } from './openai';
+import { FileChunk } from './file';
 
 export interface Message {
   role: Role;
@@ -13,6 +14,7 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
+  fileChunk: FileChunk[];
 }
 
 export interface Conversation {
