@@ -219,7 +219,7 @@ export const Chatbar = () => {
   const [files, setFiles] = useState<FileLite[]>([]);
 
   const handleGitRepoLoad = (files: FileLite[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...files]);
+    setFiles(files);
   };
   
 
