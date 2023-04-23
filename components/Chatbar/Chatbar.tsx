@@ -219,7 +219,9 @@ export const Chatbar = () => {
   const [files, setFiles] = useState<FileLite[]>([]);
 
   const handleGitRepoLoad = (files: FileLite[]) => {
+    localStorage.removeItem('gitRepoFiles');
     setFiles(files);
+    localStorage.setItem('gitRepoFiles', JSON.stringify(files));
   };
   
 
