@@ -18,11 +18,11 @@ import { PluginKeys } from './PluginKeys';
 export const ChatbarSettings = () => {
   const { t } = useTranslation('sidebar');
   const [isSettingDialogOpen, setIsSettingDialog] = useState<boolean>(false);
-  const [repoUrl, setRepoUrl] = useState<string>('');
+  // const [repoUrl, setRepoUrl] = useState<string>('');
 
-  const handleRepoUrlChange = (newRepoUrl: string) => {
-    setRepoUrl(newRepoUrl);
-  };
+  // const handleRepoUrlChange = (newRepoUrl: string) => {
+  //   setRepoUrl(newRepoUrl);
+  // };
 
   const {
     state: {
@@ -31,6 +31,7 @@ export const ChatbarSettings = () => {
       serverSideApiKeyIsSet,
       serverSidePluginKeysSet,
       conversations,
+      repoUrl,
     },
     dispatch: homeDispatch,
   } = useContext(HomeContext);
@@ -40,6 +41,7 @@ export const ChatbarSettings = () => {
     handleImportConversations,
     handleExportData,
     handleApiKeyChange,
+    handleGithubRepoChange,
   } = useContext(ChatbarContext);
 
   return (
@@ -62,7 +64,7 @@ export const ChatbarSettings = () => {
         onClick={() => setIsSettingDialog(true)}
       />
 
-      <GithubRepo repoUrl={repoUrl} onRepoUrlChange={handleRepoUrlChange} />
+      <GithubRepo repoUrl={repoUrl} onRepoUrlChange={handleGithubRepoChange} />
 
       {!serverSideApiKeyIsSet ? (
         <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />

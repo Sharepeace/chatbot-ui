@@ -62,13 +62,13 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange }) => {
             setTimeout(() => setProgress({ percentage: 100, message: 'Complete!' }), 4000);
 
             // Example API call
-            const response = await fetch('/api/githubScrape', {
-                method: 'POST',
+            const response = await fetch(`/api/githubScrape?repoUrl=${encodeURIComponent(repoUrl)}`, {
+                method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
+                  'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ repoUrl }),
-            });
+              });
+          
 
             if (response.ok) {
                 const data = await response.json();

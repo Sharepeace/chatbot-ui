@@ -282,6 +282,11 @@ const Home = ({
       dispatch({ field: 'showPromptbar', value: false });
     }
 
+    const repoUrl = localStorage.getItem('repoUrl');
+    if (repoUrl) {
+      console.log("should dispatch repoUrl here")
+    }
+
     const showChatbar = localStorage.getItem('showChatbar');
     if (showChatbar) {
       dispatch({ field: 'showChatbar', value: showChatbar === 'true' });

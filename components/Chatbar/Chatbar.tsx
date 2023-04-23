@@ -55,6 +55,15 @@ export const Chatbar = () => {
     [homeDispatch],
   );
 
+  const handleGithubRepoChange = useCallback(
+    (repoUrl: string) => {
+      homeDispatch({ field: 'repoUrl', value: repoUrl });
+
+      localStorage.setItem('repoUrl', repoUrl);
+    },
+    [homeDispatch],
+  );
+
   const handlePluginKeyChange = (pluginKey: PluginKey) => {
     if (pluginKeys.some((key) => key.pluginId === pluginKey.pluginId)) {
       const updatedPluginKeys = pluginKeys.map((key) => {
@@ -217,6 +226,7 @@ export const Chatbar = () => {
         handlePluginKeyChange,
         handleClearPluginKey,
         handleApiKeyChange,
+        handleGithubRepoChange
       }}
     >
       <Sidebar<Conversation>
