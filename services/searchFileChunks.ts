@@ -17,6 +17,7 @@ export async function searchFileChunks({
 }): Promise<FileChunk[]> {
   // Get the search query embedding
   const searchQueryEmbeddingResponse = await embedding({
+    fileName: '',
     input: searchQuery,
   });
 
