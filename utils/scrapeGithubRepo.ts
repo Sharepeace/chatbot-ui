@@ -49,31 +49,7 @@ async function scrapeGithubRepo(repoUrl: string, token?: string): Promise<Map<st
                         }
                         let text = await fileResponse.text();
                         text = text.replace(/\r?\n|\r/g, '').trim(); // Remove newlines and trim the text
-
-                        // Call OpenAI API to compress the text
-                        const prompt = `compressor: Compress text for GPT-4 reconstruction. Use any language or encoding to fit in a tweet. It should yield the same result in a new inference cycle.\n\n${text}\n\n`;
-                        const response = await fetch('https://api.openai.com/v1/completions', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-                            },
-                            body: JSON.stringify({
-                                prompt,
-                                max_tokens: 3500,
-                                temperature: 0.1,
-                                n: 1,
-                                stop: '\n'
-                            })
-                        });
-                        if (!response.ok) {
-                            console.error(`Failed to compress text for file ${item.path}: ${response.statusText}`);
-                            return;
-                        }
-                        const data = await response.json();
-                        const choices = (data as any).choices;
-                        const compressedText = choices[0].text.trim();
-                        scrapedText.set(`${path}${item.name}`, compressedText);
+                        scrapedText.set(`${path}${item.name}`, text);
                     })());
                 }
             } else if (item.type === "dir") {
