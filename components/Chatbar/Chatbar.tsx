@@ -56,15 +56,6 @@ export const Chatbar = () => {
     [homeDispatch],
   );
 
-  const handleGithubRepoChange = useCallback(
-    (repoUrl: string) => {
-      homeDispatch({ field: 'repoUrl', value: repoUrl });
-
-      localStorage.setItem('repoUrl', repoUrl);
-    },
-    [homeDispatch],
-  );
-
   const handlePluginKeyChange = (pluginKey: PluginKey) => {
     if (pluginKeys.some((key) => key.pluginId === pluginKey.pluginId)) {
       const updatedPluginKeys = pluginKeys.map((key) => {
@@ -219,11 +210,21 @@ export const Chatbar = () => {
   const [files, setFiles] = useState<FileLite[]>([]);
 
   const handleGitRepoLoad = (files: FileLite[]) => {
-    localStorage.removeItem('gitRepoFiles');
+    localStorage.removeItem('repoFile');
     setFiles(files);
-    localStorage.setItem('gitRepoFiles', JSON.stringify(files));
+    homeDispatch({ field: 'repoFile', value: files });
+    localStorage.setItem('repoFile', JSON.stringify(files));
   };
   
+  
+  const handleGithubRepoChange = useCallback(
+    (repoUrl: string) => {
+      homeDispatch({ field: 'repoUrl', value: repoUrl });
+
+      localStorage.setItem('repoUrl', repoUrl);
+    },
+    [homeDispatch],
+  );
 
   return (
     <ChatbarContext.Provider

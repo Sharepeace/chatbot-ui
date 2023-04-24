@@ -14,6 +14,7 @@ import { SidebarButton } from '../../Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
 import { ClearConversations } from './ClearConversations';
 import { PluginKeys } from './PluginKeys';
+import { FileLite } from '@/types/file'
 
 export const ChatbarSettings = () => {
   const { t } = useTranslation('sidebar');
@@ -32,6 +33,7 @@ export const ChatbarSettings = () => {
       serverSidePluginKeysSet,
       conversations,
       repoUrl,
+      repoFile,
     },
     dispatch: homeDispatch,
   } = useContext(HomeContext);
@@ -44,6 +46,11 @@ export const ChatbarSettings = () => {
     handleGithubRepoChange,
     handleGitRepoLoad
   } = useContext(ChatbarContext);
+
+  // const handleSetGitFiles = (files: FileLite[]) => {
+  //   homeDispatch({ field: 'gitRepoFiles', value: file });
+  //   repoFile = files;
+  // }
 
   return (
     <div className="flex flex-col items-center space-y-1 border-t border-white/20 pt-1 text-sm">

@@ -33,6 +33,8 @@ import { ModelSelect } from './ModelSelect';
 import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
+import { FileChunk, FileLite } from '@/types/file'
+import axios from "axios";
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -53,6 +55,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       modelError,
       loading,
       prompts,
+      // repoUrl,
+      // repoFile
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -93,15 +97,52 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         });
         homeDispatch({ field: 'loading', value: true });
         homeDispatch({ field: 'messageIsStreaming', value: true });
+
+        let results: FileChunk[] = [];
+
+        const repoFile = localStorage.getItem('repoFile');
+
+        console.log('search file chunks request payload:', {
+          searchQuery: message,
+          files: repoFile,
+          maxResults: 10,
+        });
+        if (repoFile) {
+          const parsedRepoFile = JSON.parse(repoFile) as FileLite[];
+          try {
+            const searchResultsResponse = await axios.post(
+              "/api/search-file-chunks",
+              {
+                searchQuery: message,   // TODO try with updatedConversation.messages
+                files: parsedRepoFile,
+                maxResults: 10,
+              }
+            );
+
+            if (searchResultsResponse.status === 200) {
+              console.log("search-file-chunks success");
+              results = searchResultsResponse.data.searchResults;
+            } else {
+              homeDispatch({ field: 'loading', value: false });
+              homeDispatch({ field: 'messageIsStreaming', value: false });
+              toast.error(searchResultsResponse.statusText);
+              return;
+            }
+          } catch (err: any) {
+            homeDispatch({ field: 'loading', value: false });
+            homeDispatch({ field: 'messageIsStreaming', value: false });
+            return;
+          }
+        }
         const chatBody: ChatBody = {
           model: updatedConversation.model,
           messages: updatedConversation.messages,
           key: apiKey,
           prompt: updatedConversation.prompt,
           temperature: updatedConversation.temperature,
+          fileChunk: results
         };
         const endpoint = getEndpoint(plugin);
-        
         let body;
         if (!plugin) {
           body = JSON.stringify(chatBody);
@@ -252,6 +293,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       pluginKeys,
       selectedConversation,
       stopConversationRef,
+      // repoUrl,
+      // repoFile
     ],
   );
 
