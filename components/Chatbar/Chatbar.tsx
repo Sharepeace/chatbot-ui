@@ -211,7 +211,7 @@ export const Chatbar = () => {
 
   const handleGitRepoLoad = (files: FileLite[]) => {
     localStorage.removeItem('repoFile');
-    setFiles(files);
+    setFiles(files)
     homeDispatch({ field: 'repoFile', value: files });
     localStorage.setItem('repoFile', JSON.stringify(files));
   };

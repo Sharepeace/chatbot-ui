@@ -70,6 +70,8 @@ const Home = ({
       selectedConversation,
       prompts,
       temperature,
+      repoUrl,
+      repoFile
     },
     dispatch,
   } = contextValue;

@@ -105,34 +105,37 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         const searchQuery = message?.content;
         const parsedRepoFile = JSON.parse(repoFile || '[]') as FileLite[];
 
-        console.log('search file chunks request payload:', {
-          searchQuery,
-          files: parsedRepoFile,
-          maxResults: 10,
-        });
-
+        console.log('search file chunks request payload:')
         try {
-          const searchResultsResponse = await axios.post(
-            "/api/search-file-chunks",
-            {
+          const searchResultsResponse = await fetch("/api/search-file-chunks", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
               searchQuery,
               files: parsedRepoFile,
               maxResults: 10,
-            }
-          );
+            }),
+          });
 
-          if (searchResultsResponse.status === 200) {
+          if (searchResultsResponse.ok) {
             console.log("search-file-chunks success");
-            results = searchResultsResponse.data.searchResults;
+            results = (await searchResultsResponse.json()).searchResults;
           } else {
+            console.log("search-file-chunks error");
+            homeDispatch({ field: 'loading', value: false });
+            homeDispatch({ field: 'messageIsStreaming', value: false });
             throw new Error(searchResultsResponse.statusText);
           }
         } catch (err: any) {
-          console.error(err);
+          console.error("search-file-chunks error ", err);
           homeDispatch({ field: 'loading', value: false });
-          homeDispatch({ field: 'messageIsStreaming', value: false }); toast.error(err.message || 'Something went wrong');
+          homeDispatch({ field: 'messageIsStreaming', value: false });
+          toast.error(err.message || 'Something went wrong');
           return;
         }
+        console.log('search file chunks done:')
 
         const chatBody: ChatBody = {
           model: updatedConversation.model,
