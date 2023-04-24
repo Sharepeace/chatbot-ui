@@ -102,38 +102,38 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         const repoFile = localStorage.getItem('repoFile');
 
+        const searchQuery = message?.content;
+        const parsedRepoFile = JSON.parse(repoFile || '[]') as FileLite[];
+
         console.log('search file chunks request payload:', {
-          searchQuery: message,
-          files: repoFile,
+          searchQuery,
+          files: parsedRepoFile,
           maxResults: 10,
         });
-        if (repoFile) {
-          const parsedRepoFile = JSON.parse(repoFile) as FileLite[];
-          try {
-            const searchResultsResponse = await axios.post(
-              "/api/search-file-chunks",
-              {
-                searchQuery: message,   // TODO try with updatedConversation.messages
-                files: parsedRepoFile,
-                maxResults: 10,
-              }
-            );
 
-            if (searchResultsResponse.status === 200) {
-              console.log("search-file-chunks success");
-              results = searchResultsResponse.data.searchResults;
-            } else {
-              homeDispatch({ field: 'loading', value: false });
-              homeDispatch({ field: 'messageIsStreaming', value: false });
-              toast.error(searchResultsResponse.statusText);
-              return;
+        try {
+          const searchResultsResponse = await axios.post(
+            "/api/search-file-chunks",
+            {
+              searchQuery,
+              files: parsedRepoFile,
+              maxResults: 10,
             }
-          } catch (err: any) {
-            homeDispatch({ field: 'loading', value: false });
-            homeDispatch({ field: 'messageIsStreaming', value: false });
-            return;
+          );
+
+          if (searchResultsResponse.status === 200) {
+            console.log("search-file-chunks success");
+            results = searchResultsResponse.data.searchResults;
+          } else {
+            throw new Error(searchResultsResponse.statusText);
           }
+        } catch (err: any) {
+          console.error(err);
+          homeDispatch({ field: 'loading', value: false });
+          homeDispatch({ field: 'messageIsStreaming', value: false }); toast.error(err.message || 'Something went wrong');
+          return;
         }
+
         const chatBody: ChatBody = {
           model: updatedConversation.model,
           messages: updatedConversation.messages,

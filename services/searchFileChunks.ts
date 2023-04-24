@@ -15,12 +15,12 @@ export async function searchFileChunks({
   files: FileLite[];
   maxResults: number;
 }): Promise<FileChunk[]> {
+ 
   // Get the search query embedding
   const searchQueryEmbeddingResponse = await embedding({
     fileName: '',
     input: searchQuery,
   });
-
   // Get the first element in the embedding array
   const searchQueryEmbedding =
     searchQueryEmbeddingResponse.length > 0
@@ -49,6 +49,6 @@ export async function searchFileChunks({
     .filter((chunk) => chunk.score > COSINE_SIM_THRESHOLD)
     // Take the first maxResults chunks
     .slice(0, maxResults);
-
+    
   return rankedChunks;
 }
