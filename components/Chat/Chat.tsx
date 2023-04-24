@@ -34,7 +34,6 @@ import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { FileChunk, FileLite } from '@/types/file'
-import axios from "axios";
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -115,7 +114,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             body: JSON.stringify({
               searchQuery,
               files: parsedRepoFile,
-              maxResults: 10,
+              maxResults: 5,
             }),
           });
 
