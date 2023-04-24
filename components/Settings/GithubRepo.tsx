@@ -107,12 +107,12 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
                     setProgress({ percentage: 0, message: "Errored" });
                 }
             } else {
-                console.error('Error fetching GitHub repo:', response.status);
+                console.error('Error fetching GitHub repo1:', response.status);
                 setProgress({ percentage: 0, message: 'Errored' });
             }
 
         } catch (error) {
-            console.error('Error fetching GitHub repo:', error);
+            console.error('Error fetching GitHub repo2:', error);
             setProgress({ percentage: 0, message: 'Errored' });
         }
 

@@ -128,7 +128,6 @@ export async function* completionStream({
         const message = line.trim().split("data: ")[1];
         if (message === "[DONE]") {
           console.log("completionStream finished");
-
           break;
         }
 
@@ -155,7 +154,7 @@ export async function* completionStream({
 }
 
 export async function embedding(options: EmbeddingOptions): Promise<number[][]> {
-  console.log("Calling embedding with options: ", options.fileName);
+  // console.log("Calling embedding with options: ", options.fileName);
   return limiter.schedule(() => _embedding(options));
 }
 
@@ -164,7 +163,7 @@ export async function _embedding({
   input,
   model = "text-embedding-ada-002",
 }: EmbeddingOptions): Promise<number[][]> {
-  console.log("Entering _embedding function with options: ",fileName);
+  // console.log("Entering _embedding function with options: ",fileName);
   const result = await openai.createEmbedding({
     model,
     input,
@@ -172,7 +171,7 @@ export async function _embedding({
   {
     timeout: 60000, // Add this line to set a 60 seconds timeout
   });
-  console.log("Received result from API _embedding:");
+  // console.log("Received result from API _embedding:");
 
   if (!result.data.data[0].embedding) {
     throw new Error("No embedding returned from the completions endpoint");
