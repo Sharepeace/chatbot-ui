@@ -118,8 +118,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           });
 
           if (searchResultsResponse.ok) {
-            console.log("search-file-chunks success");
-            results = (await searchResultsResponse.json()).searchResults;
+            results = await searchResultsResponse.json();
+            console.log("search-file-chunks success: ", results);
           } else {
             console.log("search-file-chunks error");
             homeDispatch({ field: 'loading', value: false });
