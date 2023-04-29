@@ -48,9 +48,13 @@ const handler = async (req: Request): Promise<Response> => {
         .slice(0, MAX_FILES_LENGTH);
       // console.log("fileChunks in chat filesString: ", filesString)
 
+      const userQuestion = messages[messages.length - 1].content;
       embeddedContext =
-       `You have access to the git repository provided with the following git repository to start with: ${filesString}. You are an all star programmer and you are given piece of the git repository. You can suggest options or ask for more questions to answer the following questions as best as you can. ${messages.length-1}`
-      messages[messages.length-1] = { role: 'user', content: embeddedContext }
+        `Given the git repository context: ${filesString}.\n\n You are an all star programmer, answer the following questions as best as you can. ${userQuestion}`
+      console.log("questions ", messages[messages.length - 1])
+      messages[messages.length - 1] = { role: 'user', content: embeddedContext }
+      console.log("message ", messages)
+
     }
 
     let temperatureToUse = temperature;

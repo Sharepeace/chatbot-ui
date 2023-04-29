@@ -95,7 +95,7 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
 
             // Example API call
             const response = await fetch(
-                `/api/process-github-repo?repoUrl=${encodeURIComponent(repoUrl)}`,
+                `/api/process-github-repo?repoUrl=${encodeURIComponent(repoUrl)}&apiKey=${encodeURIComponent(apiKey)}`,
                 {
                     method: "GET",
                     headers: {
