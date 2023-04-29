@@ -27,7 +27,6 @@ export async function getEmbeddingsForText({
   }
 
   try {
-    console.log("Entering getEmbeddingsForText: ",fileName);
     const batchPromises = batches.map((batch) => embedding({ fileName, input: batch }));
 
     const embeddings = (await Promise.all(batchPromises)).flat();

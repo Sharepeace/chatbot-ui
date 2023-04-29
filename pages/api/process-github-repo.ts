@@ -3,8 +3,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import scrapeGithubRepo from "../../utils/scrapeGithubRepo";
 import { loadEnvConfig } from "@next/env";
 import { FileLite } from "@/types/file";
+import { createClient } from "@supabase/supabase-js";
 
 loadEnvConfig(process.cwd());
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
@@ -16,11 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // array of tuple [filename, fileContent]..
-        const data  = await scrapeGithubRepo(repoUrl, process.env.GITHUB_TOKEN);
+        const data = await scrapeGithubRepo(repoUrl, process.env.GITHUB_TOKEN);
         console.log("process-github-repo scrapeGithubRepo: ");
 
-        
-        // Add the following code:
+        // processing the data. create embedding and add to supabase        
         const processedFiles = await Promise.all(
             Array.from(data.entries()).map(async ([fileName, fileText]) => {
                 try {
@@ -32,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                     const fileObject: FileLite = {
                         name: fileName,
-                        url: "",
+                        url: repoUrl,
                         type: "text/plain",
                         size: fileText.length,
                         expanded: false,
@@ -40,7 +41,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         chunks,
                         extractedText: fileText,
                     };
+                    const { data, error } = await supabase
+                        .from("github-chatbot")
+                        .insert(fileObject) // Insert the fileObject directly
 
+                        .select("*");
+
+                    if (error) {
+                        console.log("error", error);
+                    } else {
+                        console.log("saved", data);
+                    }
                     return fileObject;
                 } catch (error: any) {
                     console.error(`Error creating file embedding: ${error}`);

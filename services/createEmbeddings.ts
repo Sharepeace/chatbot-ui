@@ -16,7 +16,6 @@ export async function createEmbeddings({
   maxCharLength?: number;
 }): Promise<Embeddings> {
   try {
-    console.log("createEmbeddings getEmbeddingsForText: ");
     const textEmbeddings = await getEmbeddingsForText({
       fileName,
       text,
