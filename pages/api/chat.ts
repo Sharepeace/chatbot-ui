@@ -35,6 +35,8 @@ const handler = async (req: Request): Promise<Response> => {
     let filesString;
     console.log("In chat handler: ", fileChunk.length)
 
+    let embeddedContext = '';
+
     if (fileChunk.length > 0) {
       fileChunks = fileChunk as ScrapeDataType[];
       console.log("fileChunks in chat : ")
@@ -46,8 +48,9 @@ const handler = async (req: Request): Promise<Response> => {
         .slice(0, MAX_FILES_LENGTH);
       console.log("fileChunks in chat filesString: ", filesString)
 
-      promptToSend =
-       `Context: ${filesString}. You are an all star programmer. Given the previouse context of the code base answer the following questions as best as you can.`
+      embeddedContext =
+       `You have access to the git repository provided with the following git repository to start with: ${filesString}. You are an all star programmer and you are given piece of the git repository. You can suggest options or ask for more questions to answer the following questions as best as you can. ${messages.length-1}`
+      messages[messages.length-1] = { role: 'user', content: embeddedContext }
     }
 
     let temperatureToUse = temperature;
