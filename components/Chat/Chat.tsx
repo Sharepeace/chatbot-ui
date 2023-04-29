@@ -105,6 +105,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         console.log('search file chunks request payload:')
         if (repoUrl) {
+          console.log('repoUrl: ', repoUrl)
           try {
             const searchResultsResponse = await fetch("/api/search", {
               method: "POST",
