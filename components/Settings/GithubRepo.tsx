@@ -4,6 +4,7 @@ import {
     useEffect,
     useRef,
     useState,
+    useContext,
     Dispatch,
     SetStateAction,
 } from 'react';
@@ -23,6 +24,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { FileLite } from '@/types/file';
 import { supabase } from '@/utils/client'
 import SignInModal from '../Auth/SignInModal';
+import HomeContext from '@/pages/api/home/home.context';
 
 interface Props {
     repoUrl: string;
@@ -31,6 +33,16 @@ interface Props {
 }
 
 export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFiles }) => {
+    
+    const {
+        state: {
+          apiKey,
+          serverSideApiKeyIsSet,
+        },
+        handleUpdateConversation,
+        dispatch: homeDispatch,
+      } = useContext(HomeContext);
+
     const { t } = useTranslation('sidebar');
     const [isChanging, setIsChanging] = useState(false);
     const [newRepoUrl, setNewRepoUrl] = useState(repoUrl);
@@ -44,6 +56,7 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
     };
 
     const handleUpdateRepoUrl = (newRepoUrl: string) => {
+        console.log("user input apikey", apiKey);
         onRepoUrlChange(newRepoUrl.trim());
         setIsChanging(false);
     };
@@ -147,7 +160,7 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
                                 onClick={async () => {
                                     handleUpdateRepoUrl(newRepoUrl);
                                     // Call the nextjs api/githubScrape function here
-                                    await fetchGitHubRepo(newRepoUrl);
+                                    // await fetchGitHubRepo(newRepoUrl);
                                     setIsDialogOpen(false);
                                 }}
                                 color="primary"

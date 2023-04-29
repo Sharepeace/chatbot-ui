@@ -23,7 +23,7 @@ const handler = async (req: Request): Promise<Response> => {
     const res = await fetch("https://api.openai.com/v1/embeddings", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`
+        Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
       },
       method: "POST",
       body: JSON.stringify({
@@ -33,6 +33,7 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     const json = await res.json();
+
     const embedding = json.data[0].embedding;
 
     const { data: chunks, error } = await supabaseAdmin.rpc("github_data_search", {

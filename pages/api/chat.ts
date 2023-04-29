@@ -46,7 +46,7 @@ const handler = async (req: Request): Promise<Response> => {
         .map((fileChunk) => `###\n\"${fileChunk.file_name}\"\n${fileChunk.content}`)
         .join("\n")
         .slice(0, MAX_FILES_LENGTH);
-      console.log("fileChunks in chat filesString: ", filesString)
+      // console.log("fileChunks in chat filesString: ", filesString)
 
       embeddedContext =
        `You have access to the git repository provided with the following git repository to start with: ${filesString}. You are an all star programmer and you are given piece of the git repository. You can suggest options or ask for more questions to answer the following questions as best as you can. ${messages.length-1}`
