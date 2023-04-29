@@ -56,7 +56,6 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
     };
 
     const handleUpdateRepoUrl = (newRepoUrl: string) => {
-        console.log("user input apikey", apiKey);
         onRepoUrlChange(newRepoUrl.trim());
         setIsChanging(false);
     };
@@ -160,7 +159,7 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
                                 onClick={async () => {
                                     handleUpdateRepoUrl(newRepoUrl);
                                     // Call the nextjs api/githubScrape function here
-                                    // await fetchGitHubRepo(newRepoUrl);
+                                    await fetchGitHubRepo(newRepoUrl);
                                     setIsDialogOpen(false);
                                 }}
                                 color="primary"
