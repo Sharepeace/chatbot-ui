@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-const apiKey = process.env.OPENAI_API_KEY || '';
 
 type GitHubContentItem = {
     name: string;

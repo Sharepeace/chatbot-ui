@@ -25,8 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // array of tuple [filename, fileContent]..
         const scrapedText = await scrapeGithubRepo(repoUrl, process.env.GITHUB_TOKEN);
 
-
-
         res.status(200).json({ data: Array.from(scrapedText.entries()) });
     } catch (error) {
         const err = error as Error & { code?: string, message?: string }; // Assert the type of error
