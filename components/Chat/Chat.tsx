@@ -33,7 +33,7 @@ import { ModelSelect } from './ModelSelect';
 import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
-import { FileChunk, FileLite } from '@/types/file'
+import { ScrapeDataType } from '@/types/file'
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -97,24 +97,23 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'loading', value: true });
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
-        let results: FileChunk[] = [];
+        let results: ScrapeDataType[] = [];
 
-        const repoFile = localStorage.getItem('repoFile');
+        const repoUrl = localStorage.getItem('repoFile');
 
         const searchQuery = message?.content;
-        const parsedRepoFile = JSON.parse(repoFile || '[]') as FileLite[];
 
         console.log('search file chunks request payload:')
         try {
-          const searchResultsResponse = await fetch("/api/search-file-chunks", {
+          const searchResultsResponse = await fetch("/api/search", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              searchQuery,
-              files: parsedRepoFile,
-              maxResults: 5,
+              query: searchQuery,
+              repoUrl: repoUrl,
+              matches: 5,
             }),
           });
 

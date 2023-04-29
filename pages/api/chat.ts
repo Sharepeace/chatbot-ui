@@ -8,7 +8,7 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
-import { FileChunk } from '@/types/file'
+import { FileChunk, ScrapeDataType } from '@/types/file'
 
 export const config = {
   runtime: 'edge',
@@ -36,12 +36,12 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("In chat handler: ", fileChunk.length)
 
     if (fileChunk.length > 0) {
-      fileChunks = fileChunk as FileChunk[];
+      fileChunks = fileChunk as ScrapeDataType[];
       console.log("fileChunks in chat : ")
       console.log("fileChunks in chat message : ", messages[messages.length - 1])
 
       filesString = fileChunks
-        .map((fileChunk) => `###\n\"${fileChunk.filename}\"\n${fileChunk.text}`)
+        .map((fileChunk) => `###\n\"${fileChunk.file_name}\"\n${fileChunk.content}`)
         .join("\n")
         .slice(0, MAX_FILES_LENGTH);
       console.log("fileChunks in chat filesString: ", filesString)

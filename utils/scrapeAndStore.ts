@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Database } from 'types_db';
 import { Configuration, OpenAIApi } from "openai";
 import { encode } from "gpt-3-encoder";
 import { v4 as uuidv4 } from 'uuid';
@@ -8,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
 const openai = new OpenAIApi(configuration);
 
-const supabaseAdmin = createClient<Database>(
+const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || '',
     process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );

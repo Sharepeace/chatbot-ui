@@ -19,3 +19,13 @@ export interface TextEmbedding {
   text: string;
   embedding: number[];
 }
+
+export type ScrapeDataType = {
+  id: string,
+  repo_url: string,
+  file_name: string,
+  content: string,
+  content_length: number,
+  content_token: number,
+  similarity: number,
+}

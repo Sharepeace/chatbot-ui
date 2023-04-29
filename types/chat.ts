@@ -1,5 +1,5 @@
 import { OpenAIModel } from './openai';
-import { FileChunk } from './file';
+import { FileChunk, ScrapeDataType } from './file';
 
 export interface Message {
   role: Role;
@@ -14,7 +14,7 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
-  fileChunk: FileChunk[];
+  fileChunk: ScrapeDataType[];
 }
 
 export interface Conversation {
