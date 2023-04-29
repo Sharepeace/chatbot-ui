@@ -47,7 +47,7 @@ export async function _completion({
   fallback,
   max_tokens,
   temperature = 0,
-  model = "gpt-3.5-turbo", // use gpt-4 for better results
+  model = "gpt-4", // use gpt-4 for better results
 }: CompletionOptions) {
   console.log("Entering _completion function with options:");
   try {
@@ -83,7 +83,7 @@ export async function* completionStream({
   fallback,
   max_tokens = 4000,
   temperature = 0,
-  model = "gpt-3.5-turbo", // use gpt-4 for better results
+  model = "gpt-4", // use gpt-4 for better results
 }: CompletionOptions) {
   console.log("Entering completionStream function with options:");
   try {
