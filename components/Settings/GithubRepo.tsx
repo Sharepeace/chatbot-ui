@@ -27,7 +27,7 @@ import axios from "axios";
 interface Props {
     repoUrl: string;
     onRepoUrlChange: (repoUrl: string) => void;
-    handleSetGitFiles: (files: FileLite[]) => void;
+    handleSetGitFiles: (files: string) => void;
 }
 
 export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFiles }) => {
@@ -97,10 +97,9 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
             if (response.ok) {
                 const data = await response.json();
                 console.log("git repo scraped: ", data);
-                if (Array.isArray(data.files)) {
-                    console.log("Received files from API:", data.files);
-                    handleSetGitFiles(data.files);
-                    console.log("git repo files processed: ", data);
+                if (data.repoUrl) {
+                    handleSetGitFiles(data.repoUrl);
+                    console.log("git repo files processed: ", data.repoUrl);
                     setProgress({ percentage: 100, message: "Complete!" });
                 } else {
                     console.error("Error processing files: 'files' property is not an array");

@@ -11,7 +11,7 @@ function delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-
+// returns Map<filename, ChunkedDataText>
 async function scrapeGithubRepo(repoUrl: string, token?: string): Promise<Map<string, string>> {
     const matches = repoUrl.match(/github\.com\/(.+)\/(.+)/);
     if (!matches) {

@@ -207,13 +207,13 @@ export const Chatbar = () => {
     }
   }, [searchTerm, conversations]);
 
-  const [files, setFiles] = useState<FileLite[]>([]);
+  const [files, setFiles] = useState('');
 
-  const handleGitRepoLoad = (files: FileLite[]) => {
+  const handleGitRepoLoad = (repoUrl: string) => {
     localStorage.removeItem('repoFile');
-    setFiles(files)
-    homeDispatch({ field: 'repoFile', value: files });
-    localStorage.setItem('repoFile', JSON.stringify(files));
+    setFiles(repoUrl)
+    homeDispatch({ field: 'repoFile', value: repoUrl });
+    localStorage.setItem('repoFile', repoUrl);
   };
   
   
