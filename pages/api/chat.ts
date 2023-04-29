@@ -39,8 +39,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (fileChunk.length > 0) {
       fileChunks = fileChunk as ScrapeDataType[];
-      console.log("fileChunks in chat : ")
-      console.log("fileChunks in chat message : ", messages[messages.length - 1])
+      // console.log("fileChunks in chat : ")
+      // console.log("fileChunks in chat message : ", messages[messages.length - 1])
 
       filesString = fileChunks
         .map((fileChunk) => `###\n\"${fileChunk.file_name}\"\n${fileChunk.content}`)
@@ -51,9 +51,7 @@ const handler = async (req: Request): Promise<Response> => {
       const userQuestion = messages[messages.length - 1].content;
       embeddedContext =
         `Given the git repository context: ${filesString}.\n\n You are an all star programmer, answer the following questions as best as you can. ${userQuestion}`
-      console.log("questions ", messages[messages.length - 1])
       messages[messages.length - 1] = { role: 'user', content: embeddedContext }
-      console.log("message ", messages)
 
     }
 
