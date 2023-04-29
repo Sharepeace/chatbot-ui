@@ -21,8 +21,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import LinearProgress from '@mui/material/LinearProgress';
 import { FileLite } from '@/types/file';
-import { compact } from "lodash";
-import axios from "axios";
+import { supabase } from '@/utils/client'
+import SignInModal from '../Auth/SignInModal';
 
 interface Props {
     repoUrl: string;
@@ -64,7 +64,7 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
 
     const [files, setFiles] = useState<FileLite[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState("");    
 
     const [progress, setProgress] = useState({ percentage: 0, message: '' });
     const fetchGitHubRepo = async (repoUrl: string) => {
