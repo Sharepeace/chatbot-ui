@@ -104,36 +104,38 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         const searchQuery = message?.content;
 
         console.log('search file chunks request payload:')
-        try {
-          const searchResultsResponse = await fetch("/api/search", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              query: searchQuery,
-              repoUrl: repoUrl,
-              matches: 10,
-            }),
-          });
+        if (repoUrl) {
+          try {
+            const searchResultsResponse = await fetch("/api/search", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                query: searchQuery,
+                repoUrl: repoUrl,
+                matches: 10,
+              }),
+            });
 
-          if (searchResultsResponse.ok) {
-            results = await searchResultsResponse.json();
-            console.log("search-file-chunks success: ", results);
-          } else {
-            console.log("search-file-chunks error");
+            if (searchResultsResponse.ok) {
+              results = await searchResultsResponse.json();
+              console.log("search-file-chunks success: ", results);
+            } else {
+              console.log("search-file-chunks error");
+              homeDispatch({ field: 'loading', value: false });
+              homeDispatch({ field: 'messageIsStreaming', value: false });
+              throw new Error(searchResultsResponse.statusText);
+            }
+          } catch (err: any) {
+            console.error("search-file-chunks error ", err);
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
-            throw new Error(searchResultsResponse.statusText);
+            toast.error(err.message || 'Something went wrong');
+            return;
           }
-        } catch (err: any) {
-          console.error("search-file-chunks error ", err);
-          homeDispatch({ field: 'loading', value: false });
-          homeDispatch({ field: 'messageIsStreaming', value: false });
-          toast.error(err.message || 'Something went wrong');
-          return;
+          console.log('search file chunks done:')
         }
-        console.log('search file chunks done:')
 
         const chatBody: ChatBody = {
           model: updatedConversation.model,

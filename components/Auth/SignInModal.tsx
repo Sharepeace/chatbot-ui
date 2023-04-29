@@ -5,15 +5,32 @@ const SignInModal = () => {
     const [showModal, setShowModal] = useState(true);
     const [email, setEmail] = useState('');
 
-
     useEffect(() => {
         // Check if the user is authenticated
         const user = supabase.auth.getUser();
+        console.error('User :', user);
         if (!user) {
-            // If the user is not authenticated, show the modal
-            setShowModal(true);
+          // If the user is not authenticated, show the modal
+          setShowModal(true);
         }
-    }, []);
+    
+        // Subscribe to auth state changes
+        const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_IN') {
+            // If the user is signed in, hide the modal
+            setShowModal(false);
+          } else if (event === 'SIGNED_OUT') {
+            // If the user is signed out, show the modal
+            setShowModal(true);
+          }
+          console.error('auth event :', event);
+        });
+    
+        // Clean up the subscription when the component is unmounted
+        return () => {
+          subscription.subscription.unsubscribe();
+        };
+      }, []);
 
     const closeModal = () => setShowModal(false);
 
@@ -53,8 +70,8 @@ const SignInModal = () => {
                                 Send Magic Link
                             </button>
                             {/* <button onClick={closeModal} className="bg-gray-300 text-black px-4 py-2 rounded">
-                Dont Save
-            </button> */}
+                                Dont Save
+                            </button> */}
                         </form>
 
                     </div>
