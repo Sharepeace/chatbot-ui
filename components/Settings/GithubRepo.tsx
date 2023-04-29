@@ -123,6 +123,8 @@ export const GithubRepo: FC<Props> = ({ repoUrl, onRepoUrlChange, handleSetGitFi
                 <div className="duration:200 flex w-full cursor-pointer items-center rounded-md py-3 px-3 transition-colors hover:bg-gray-500/10">
                     <IconGitBranch size={18} />
 
+                    <SignInModal/>
+
                     <Dialog
                         open={isDialogOpen}
                         onClose={() => setIsDialogOpen(false)}
