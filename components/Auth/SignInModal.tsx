@@ -69,9 +69,9 @@ const SignInModal = () => {
                             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mb-4">
                                 Send Magic Link
                             </button>
-                            {/* <button onClick={closeModal} className="bg-gray-300 text-black px-4 py-2 rounded">
+                            <button onClick={closeModal} className="bg-gray-300 text-black px-4 py-2 rounded">
                                 Dont Save
-                            </button> */}
+                            </button>
                         </form>
 
                     </div>

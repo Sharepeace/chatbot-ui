@@ -11,10 +11,11 @@ const supabaseAdmin = createClient(
 const openAiKey = process.env.OPENAI_API_KEY
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { query, repoUrl, matches } = (await req.json()) as {
+    const { query, repoUrl, matches, key } = (await req.json()) as {
       query: string;
       repoUrl: string,
       matches: number;
+      key: string;
     };
 
     const input = query.replace(/\n/g, " ");
@@ -22,7 +23,7 @@ const handler = async (req: Request): Promise<Response> => {
     const res = await fetch("https://api.openai.com/v1/embeddings", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${openAiKey}`
+        Authorization: `Bearer ${key}`
       },
       method: "POST",
       body: JSON.stringify({
