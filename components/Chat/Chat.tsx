@@ -115,7 +115,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               body: JSON.stringify({
                 query: searchQuery,
                 repoUrl: repoUrl,
-                matches: 10,
+                matches: 5,
                 key: apiKey,
               }),
             });
