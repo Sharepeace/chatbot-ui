@@ -14,6 +14,7 @@ export const config = {
   runtime: 'edge',
 };
 const MAX_FILES_LENGTH = 2000 * 3;
+const MAX_FILE_CHUNKS_TOKENS = 2000; // Set a limit for file chunks tokens
 
 const handler = async (req: Request): Promise<Response> => {
 
@@ -27,50 +28,42 @@ const handler = async (req: Request): Promise<Response> => {
       tiktokenModel.pat_str,
     );
 
-    let promptToSend = prompt;
-    if (!promptToSend) {
-      promptToSend = DEFAULT_SYSTEM_PROMPT;
-    }
-    let fileChunks = [];
-    let filesString;
-    console.log("In chat handler: ", fileChunk.length)
+    const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
+    const temperatureToUse = temperature ?? DEFAULT_TEMPERATURE;
 
-    let embeddedContext = '';
+    let fileChunksTokens = 0;
+    let filesString = '';
 
     if (fileChunk.length > 0) {
-      fileChunks = fileChunk as ScrapeDataType[];
-      // console.log("fileChunks in chat : ")
-      // console.log("fileChunks in chat message : ", messages[messages.length - 1])
-
+      const fileChunks = fileChunk as ScrapeDataType[];
       filesString = fileChunks
-        .map((fileChunk) => `###\n\"${fileChunk.file_name}\"\n${fileChunk.content}`)
+        .map((fileChunk) => {
+          const fileContent = `###\n\"${fileChunk.file_name}\"\n${fileChunk.content}`;
+          const tokens = encoding.encode(fileContent);
+          if (fileChunksTokens + tokens.length <= MAX_FILE_CHUNKS_TOKENS) {
+            fileChunksTokens += tokens.length;
+            return fileContent;
+          }
+          return null;
+        })
+        .filter(Boolean)
         .join("\n")
         .slice(0, MAX_FILES_LENGTH);
-      // console.log("fileChunks in chat filesString: ", filesString)
 
-      const userQuestion = messages[messages.length - 1].content;
-      embeddedContext =
-        `Given the git repository context: ${filesString}.\n\n You are an all star programmer, answer the following questions as best as you can. ${userQuestion}`
-      messages[messages.length - 1] = { role: 'user', content: embeddedContext }
-
-    }
-
-    let temperatureToUse = temperature;
-    if (temperatureToUse == null) {
-      temperatureToUse = DEFAULT_TEMPERATURE;
+      filesString = `Given the git repository context: ${filesString}.\n\n You are an all star programmer, answer the following questions as best as you can.`;
     }
 
     const prompt_tokens = encoding.encode(promptToSend);
+    let tokenCount = prompt_tokens.length + fileChunksTokens;
 
-    let tokenCount = prompt_tokens.length;
     let messagesToSend: Message[] = [];
 
     for (let i = messages.length - 1; i >= 0; i--) {
       const message = messages[i];
       const tokens = encoding.encode(message.content);
 
-      if (tokenCount + tokens.length + 1000 > model.tokenLimit) {
-        break;
+      if (tokenCount + tokens.length > model.tokenLimit - 1000) {
+        continue;
       }
       tokenCount += tokens.length;
       messagesToSend = [message, ...messagesToSend];
