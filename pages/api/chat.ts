@@ -28,7 +28,7 @@ const handler = async (req: Request): Promise<Response> => {
       tiktokenModel.pat_str,
     );
 
-    const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
+    let promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
     const temperatureToUse = temperature ?? DEFAULT_TEMPERATURE;
 
     let fileChunksTokens = 0;
@@ -49,8 +49,7 @@ const handler = async (req: Request): Promise<Response> => {
         .filter(Boolean)
         .join("\n")
         .slice(0, MAX_FILES_LENGTH);
-
-      filesString = `Given the git repository context: ${filesString}.\n\n You are an all star programmer, answer the following questions as best as you can.`;
+      promptToSend = `Given the git repository context: ${filesString}.\n\n You are an all star programmer, answer the following questions as best as you can.`;
     }
 
     const prompt_tokens = encoding.encode(promptToSend);
