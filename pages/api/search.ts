@@ -11,8 +11,9 @@ const supabaseAdmin = createClient(
 const openAiKey = process.env.OPENAI_API_KEY
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { query, repoUrl, matches, key } = (await req.json()) as {
+    const { query, userId, repoUrl, matches, key } = (await req.json()) as {
       query: string;
+      userId: string;
       repoUrl: string,
       matches: number;
       key: string;
@@ -39,6 +40,7 @@ const handler = async (req: Request): Promise<Response> => {
     const { data: chunks, error } = await supabaseAdmin.rpc("github_data_search", {
       query_embedding: embedding,
       similarity_threshold: 0.05,
+      input_user_id: userId,
       input_repo_url: repoUrl,
       match_count: matches
     });

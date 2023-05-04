@@ -98,10 +98,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         let results: ScrapeDataType[] = [];
-
         const repoUrl = localStorage.getItem('repoFile');
-
         const searchQuery = message?.content;
+        const userId = '';
 
         console.log('search file chunks request payload:')
         if (repoUrl) {
@@ -114,6 +113,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               },
               body: JSON.stringify({
                 query: searchQuery,
+                userId: userId,
                 repoUrl: repoUrl,
                 matches: 5,
                 key: apiKey,

@@ -18,7 +18,7 @@ const chunkText = (text: string, size: number): string[] => {
     return chunks;
 };
 
-const processData = async (repoUrl: string, fileName: string, fileText: string, apiKey: string) => {
+const processData = async (userId: string, repoUrl: string, fileName: string, fileText: string, apiKey: string) => {
 
     const content = fileText;
     const chunks = chunkText(content, 1000);
@@ -33,6 +33,7 @@ const processData = async (repoUrl: string, fileName: string, fileText: string, 
         const { error } = await supabaseAdmin.from('github_chatbot').insert([
             {
                 id: id,
+                user_id: userId,
                 repo_url: repoUrl,
                 file_name: fileName,
                 content: chunk,
@@ -48,10 +49,10 @@ const processData = async (repoUrl: string, fileName: string, fileText: string, 
     }
 };
 
-async function scrapeAndStoreData(repoUrl: string, data: Map<string, string>, apiKey: string) {
+async function scrapeAndStoreData(userId: string, repoUrl: string, data: Map<string, string>, apiKey: string) {
     try {
         await Promise.all(
-            Array.from(data.entries()).map(async ([fileName, fileText]) => processData(repoUrl, fileName, fileText, apiKey)));
+            Array.from(data.entries()).map(async ([fileName, fileText]) => processData(userId, repoUrl, fileName, fileText, apiKey)));
         return true;
     } catch (error) {
         console.error('Failed to scrape and store data', error);
