@@ -1,26 +1,27 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { supabase } from '@/utils/client'
 
-export const AuthContext = createContext();
+export async function signInWithToken(token) {
+  const response = await fetch('/api/verify-token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token }),
+  });
 
-export const AuthProvider = ({ supabase, ...props }) => {
-  const [session, setSession] = useState(null);
-  const [user, setUser] = useState(null);
+  if (response.ok) {
+    const { user } = await response.json();
+    // Log the user in using Supabase's session management
+    const { session, error } = await supabase.auth.signIn({
+      user: user.id,
+    });
 
-  const value = useMemo(() => {
-    return {
-      session,
-      user,
-      signOut: () => supabase.auth.signOut(),
-    };
-  }, [session, user, supabase]);
-
-  return <AuthContext.Provider value={value} {...props} />;
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    if (error) {
+      console.error('Error logging in:', error.message);
+    } else {
+      console.log('User logged in successfully:', session.user);
+    }
+  } else {
+    console.error('Token verification failed:', response.statusText);
   }
-  return context;
-};
+}

@@ -7,6 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 import { scrapeAndStoreData } from '../../utils/scrapeAndStore';
 
 loadEnvConfig(process.cwd());
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
@@ -14,6 +15,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const repoUrl = req.query.repoUrl as string;
         const apiKey = req.query.apiKey as string;
+        const user =  ''; //supabase.auth.getUser();
+
         if (typeof repoUrl !== "string") {
             return res.status(400).json({ error: "Invalid repoUrl parameter" });
         }
@@ -22,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const data = await scrapeGithubRepo(repoUrl, process.env.GITHUB_TOKEN);
         console.log("process-github-repo scrapeGithubRepo: ");
 
-        const isComplete = await scrapeAndStoreData(repoUrl, data, apiKey);
+        const isComplete = await scrapeAndStoreData(user, repoUrl, data, apiKey);
 
         // Return the validFiles array in the response
         res.status(200).json({ repoUrl: repoUrl });
