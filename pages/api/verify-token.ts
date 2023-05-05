@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else {
       res.status(200).json({ user });
     }
-  } catch (err) {
-    res.status(401).json({ message: 'Error fetching user information from Supabase' });
+  } catch (err: any) {
+    res.status(401).json({ message: 'Error fetching user information from Supabase or verifying token', error: err.message });
   }
 }
