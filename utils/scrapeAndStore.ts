@@ -44,7 +44,7 @@ const processData = async (userId: string, repoUrl: string, fileName: string, fi
         ]);
 
         if (error) {
-            console.error('Failed to store scraped data', error);
+            console.error('Failed to add data to supabase', error);
         }
     }
 };
