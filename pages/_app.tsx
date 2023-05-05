@@ -17,7 +17,7 @@ function App({ Component, pageProps }: AppProps<{}>) {
   const router = useRouter();
   const { token } = router.query;
   useEffect(() => {
-    if (token) {
+    if (typeof token === 'string') {
       signInWithToken(token);
     }
   }, [token]);
