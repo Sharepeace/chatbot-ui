@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const decoded = jwt.verify(token, process.env.JWT_SECRET || '') as DecodedPayload;
 
     // Fetch the user's information from Supabase using their user ID
-    const { data: user, error } = await supabase.auth.getUser(token);
+    const { data: user, error } = await supabase.auth.getUser(decoded.userId);
 
     if (error) {
       res.status(400).json({ message: 'Error fetching user information from Supabase' });
