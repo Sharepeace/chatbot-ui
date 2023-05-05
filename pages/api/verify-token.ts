@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '@/utils/client';
 
 interface DecodedPayload {
+  token: string,
   userId: string;
   subscriptionStatus: string;
   exp: number;
@@ -17,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const decoded = jwt.verify(token, process.env.JWT_SECRET || '') as DecodedPayload;
 
     // Fetch the user's information from Supabase using their user ID
-    const { data: user, error } = await supabase.auth.getUser(token);
+    const { data: user, error } = await supabase.auth.getUser(decoded.token);
 
     if (error) {
       res.status(400).json({ message: 'Error fetching user information from Supabase', error: error.message });
