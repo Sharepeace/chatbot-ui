@@ -34,6 +34,7 @@ import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ScrapeDataType } from '@/types/file'
+import { supabase } from '@/utils/client'
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -100,11 +101,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         let results: ScrapeDataType[] = [];
         const searchQuery = message?.content;
         const botId = localStorage.getItem('bot_id');
-        const userId = '';
+        const user = await supabase.auth.getUser();
+        const userId = user.data.user?.id;
 
-        console.log('search file chunks request payload:')
+        console.log('search file chunks request payload: ')
         if (botId) {
-          console.log('try searching similarity for bot_id: ', botId)
+        
           try {
             const searchResultsResponse = await fetch("/api/search", {
               method: "POST",
@@ -115,7 +117,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 query: searchQuery,
                 userId: userId,
                 botId: botId,
-                matches: 5,
+                matches: 10,
                 key: apiKey,
               }),
             });

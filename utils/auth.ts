@@ -5,6 +5,7 @@ interface UserResponse {
   user: {
     id: string;
   };
+  bot_id: string;
 }
 
 export async function signInWithToken(token: string): Promise<void> {
@@ -17,8 +18,8 @@ export async function signInWithToken(token: string): Promise<void> {
   });
 
   if (response.ok) {
-    const { user } = (await response.json()) as UserResponse;
-    console.log('User from token: ', user);
+    const { user, bot_id } = (await response.json()) as UserResponse;
+    localStorage.setItem('bot_id', bot_id);
 
     // Log the user in using Supabase's session management
     const { data, error } = await supabase.auth.getSession()

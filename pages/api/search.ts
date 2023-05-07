@@ -36,11 +36,11 @@ const handler = async (req: Request): Promise<Response> => {
     const json = await res.json();
 
     const embedding = json.data[0].embedding;
+    console.log('Current bot id: ', botId);
 
     const { data: chunks, error } = await supabaseAdmin.rpc("github_data_search", {
       query_embedding: embedding,
-      similarity_threshold: 0.05,
-      input_user_id: userId,
+      match_threshold: 0.05,
       input_bot_id: botId,
       match_count: matches
     });
