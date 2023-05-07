@@ -98,13 +98,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         let results: ScrapeDataType[] = [];
-        const repoUrl = localStorage.getItem('repoFile');
         const searchQuery = message?.content;
+        const botId = localStorage.getItem('bot_id');
         const userId = '';
 
         console.log('search file chunks request payload:')
-        if (repoUrl) {
-          console.log('repoUrl: ', repoUrl)
+        if (botId) {
+          console.log('try searching similarity for bot_id: ', botId)
           try {
             const searchResultsResponse = await fetch("/api/search", {
               method: "POST",
@@ -114,7 +114,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               body: JSON.stringify({
                 query: searchQuery,
                 userId: userId,
-                repoUrl: repoUrl,
+                botId: botId,
                 matches: 5,
                 key: apiKey,
               }),
